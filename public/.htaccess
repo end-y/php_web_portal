@@ -1,0 +1,9 @@
+RewriteEngine On
+
+# Eğer dosya veya klasör değilse
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# .php uzantısını ekle
+RewriteRule ^([^\.]+)$ $1.php [NC,L]
+

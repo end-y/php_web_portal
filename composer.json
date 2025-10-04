@@ -1,0 +1,14 @@
+{
+  "name": "endy/php_web_portal",
+  "description": "PHP Web Portal",
+  "type": "project",
+  "autoload": {
+    "psr-4": {
+      "PHPWebPortal\\": "src/"
+    }
+  },
+  "require": {
+    "guzzlehttp/guzzle": "^7.10",
+    "vlucas/phpdotenv": "^5.6"
+  }
+}

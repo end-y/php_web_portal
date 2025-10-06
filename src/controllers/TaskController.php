@@ -28,8 +28,8 @@ class TaskController
         return [
             'tasks' => $this->task->getTasks(),
             'colorTasks' => $this->task->getColorTasks(),
-            'title' => 'Görev Listesi',
-            'showNav' => true,
+            'title' => 'Task List',
+            'showNav' => true,      
             'isLoggedIn' => true
         ];
     }

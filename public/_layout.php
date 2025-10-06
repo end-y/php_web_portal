@@ -29,5 +29,7 @@
     <main class="container mx-auto px-4">
         <?php echo $content; ?>
     </main>
+    <script src="/scripts/index.js"></script>
+    <script src="/scripts/modal.js"></script>
 </body>
 </html>

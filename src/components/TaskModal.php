@@ -18,7 +18,7 @@ function renderTaskModal(): void {
         <div id="taskModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-50">
             <div class="bg-white rounded-lg shadow-lg w-11/12 max-w-xl p-6">
                 <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-lg font-semibold">Resim seç ve önizle</h3>
+                    <h3 class="text-lg font-semibold">Choose Image and Preview</h3>
                 </div>
 
                 <div class="space-y-4">
@@ -28,7 +28,7 @@ function renderTaskModal(): void {
                     </div>
 
                     <div id="previewWrapper" class="hidden">
-                        <p class="text-sm text-gray-500 mb-2">Seçilen resim önizlemesi:</p>
+                        <p class="text-sm text-gray-500 mb-2">Selected image preview:</p>
                         <div class="border border-gray-200 rounded-md p-2">
                             <img id="imagePreview" src="" alt="Seçilen resim" class="max-h-64 w-auto mx-auto block" />
                         </div>
@@ -40,51 +40,6 @@ function renderTaskModal(): void {
                 </div>
             </div>
         </div>
-
-        <script>
-            (function() {
-                const openBtn = document.getElementById('openTaskModal');
-                const modal = document.getElementById('taskModal');
-                const closeFooter = document.getElementById('closeTaskModalFooter');
-                const chooseBtn = document.getElementById('chooseImageButton');
-                const fileInput = document.getElementById('imageInput');
-                const previewWrapper = document.getElementById('previewWrapper');
-                const previewImg = document.getElementById('imagePreview');
-
-                function openModal() {
-                    modal.classList.remove('hidden');
-                    modal.classList.add('flex');
-                }
-
-                function closeModal() {
-                    modal.classList.remove('flex');
-                    modal.classList.add('hidden');
-                }
-
-                openBtn.addEventListener('click', openModal);
-                closeFooter.addEventListener('click', closeModal);
-
-                // dışarı tıklayınca modal kapat
-                modal.addEventListener('click', function(e) {
-                    if (e.target === modal) closeModal();
-                });
-
-                chooseBtn.addEventListener('click', function() {
-                    fileInput.click();
-                });
-
-                fileInput.addEventListener('change', function(e) {
-                    const file = e.target.files && e.target.files[0];
-                    if (!file) return;
-                    const reader = new FileReader();
-                    reader.onload = function(ev) {
-                        previewImg.src = ev.target.result;
-                        previewWrapper.classList.remove('hidden');
-                    };
-                    reader.readAsDataURL(file);
-                });
-            })();
-        </script>
     </div>
     <?php
 }

@@ -1,28 +1,16 @@
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use PHPWebPortal\User;
+use PHPWebPortal\Controllers\LoginController;
 use PHPWebPortal\Utils;
 
-$error = null;
-
+$controller = new LoginController();
+$data = $controller->index();
+extract($data);
 if($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $user = new User();
-    try {
-        $user->login($_POST['username'], $_POST['password']);
-        if($user->isTokenValid()) {
-            header("Location: /");
-            exit;
-        }
-    } catch (Exception $e) {
-        $error = "Giriş başarısız! Lütfen bilgilerinizi kontrol edin.";
-    }
+    $data = $controller->login();
+    extract($data);
 }
-
-// Layout değişkenleri
-$title = 'Giriş Yap';
-$showNav = false;
-$isLoggedIn = false;
 
 // İçerik buffer'ını başlat
 ob_start();
@@ -44,7 +32,7 @@ ob_start();
         <form action="/login" method="post" class="space-y-4">
             <div>
                 <label for="username" class="block text-sm font-medium text-gray-700 mb-1">
-                    Kullanıcı Adı
+                    Name
                 </label>
                 <input 
                     type="text" 
@@ -58,7 +46,7 @@ ob_start();
 
             <div>
                 <label for="password" class="block text-sm font-medium text-gray-700 mb-1">
-                    Şifre
+                    Password
                 </label>
                 <input 
                     type="password" 
@@ -74,7 +62,7 @@ ob_start();
                 type="submit" 
                 class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition duration-200"
             >
-                Giriş Yap
+                Login
             </button>
         </form>
     </div>

@@ -21,15 +21,11 @@ jobs:
           php-version: "8.2"
           extensions: mbstring, curl, json
           coverage: none
-
-      - name: Validate composer.json
-        run: composer validate --strict
-
       - name: Install dependencies
         run: composer install --no-dev --optimize-autoloader --no-interaction
 
-      - name: Check Composer version
-        run: composer --version
+      - name: Validate composer.json
+        run: composer validate --strict
 
       - name: Create deployment package
         run: |

@@ -23,7 +23,7 @@ ob_start();
             <p class="text-gray-600 mt-2">Devam etmek için giriş yapın</p>
         </div>
 
-        <?php if($error): ?>
+        <?php if(isset($error) && $error): ?>
             <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
                 <?php echo Utils::e($error); ?>
             </div>

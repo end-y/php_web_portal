@@ -1,0 +1,121 @@
+name: Deploy to Digital Ocean
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: mbstring, curl, json
+          coverage: none
+
+      - name: Validate composer.json
+        run: composer validate --strict
+
+      - name: Install dependencies
+        run: composer install --no-dev --optimize-autoloader --no-interaction
+
+      - name: Create deployment package
+        run: |
+          mkdir -p deploy
+          rsync -av --exclude='.git' \
+                    --exclude='.github' \
+                    --exclude='deploy' \
+                    --exclude='.env' \
+                    --exclude='storage/sessions/*' \
+                    --exclude='*.md' \
+                    . deploy/
+          cd deploy
+          tar -czf ../deploy.tar.gz .
+
+      - name: Deploy to Digital Ocean
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USERNAME }}
+          key: ${{ secrets.DO_SSH_KEY }}
+          port: ${{ secrets.DO_PORT }}
+          source: "deploy.tar.gz"
+          target: "/tmp/"
+
+      - name: Execute deployment commands
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USERNAME }}
+          key: ${{ secrets.DO_SSH_KEY }}
+          port: ${{ secrets.DO_PORT }}
+          script: |
+            set -e
+
+            # Backup mevcut versiyon
+            if [ -d "${{ secrets.DO_PROJECT_PATH }}" ]; then
+              sudo cp -r ${{ secrets.DO_PROJECT_PATH }} ${{ secrets.DO_PROJECT_PATH }}_backup_$(date +%Y%m%d_%H%M%S)
+            fi
+
+            # Yeni versiyonu extract et
+            sudo mkdir -p ${{ secrets.DO_PROJECT_PATH }}
+            sudo tar -xzf /tmp/deploy.tar.gz -C ${{ secrets.DO_PROJECT_PATH }}
+            sudo rm /tmp/deploy.tar.gz
+
+            # Storage klasörünü oluştur
+            sudo mkdir -p ${{ secrets.DO_PROJECT_PATH }}/storage/sessions
+            sudo chmod -R 755 ${{ secrets.DO_PROJECT_PATH }}/storage
+            sudo chown -R www-data:www-data ${{ secrets.DO_PROJECT_PATH }}/storage
+
+            # .env dosyasını kontrol et (elle oluşturulmuş olmalı)
+            if [ ! -f "${{ secrets.DO_PROJECT_PATH }}/.env" ]; then
+              echo "WARNING: .env file not found!"
+            fi
+
+            # Composer install (production için)
+            cd ${{ secrets.DO_PROJECT_PATH }}
+            composer install --no-dev --optimize-autoloader --no-interaction
+
+            # Permissions
+            sudo chown -R www-data:www-data ${{ secrets.DO_PROJECT_PATH }}
+            sudo chmod -R 755 ${{ secrets.DO_PROJECT_PATH }}
+
+            # Restart services
+            if command -v systemctl &> /dev/null; then
+              sudo systemctl reload nginx || sudo systemctl reload apache2 || true
+              sudo systemctl reload php8.2-fpm || true
+            fi
+
+            echo "✅ Deployment completed successfully!"
+
+      - name: Verify deployment
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USERNAME }}
+          key: ${{ secrets.DO_SSH_KEY }}
+          port: ${{ secrets.DO_PORT }}
+          script: |
+            cd ${{ secrets.DO_PROJECT_PATH }}
+            php --version
+            composer --version
+            ls -la
+            echo "🚀 Deployment verification completed!"
+
+      - name: Notify deployment status
+        if: always()
+        run: |
+          if [ "${{ job.status }}" == "success" ]; then
+            echo "✅ Deployment SUCCESS - Project deployed to Digital Ocean"
+          else
+            echo "❌ Deployment FAILED - Check logs for details"
+          fi

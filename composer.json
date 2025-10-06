@@ -1,6 +1,7 @@
 {
   "name": "endy/php_web_portal",
   "description": "PHP Web Portal",
+  "license": "proprietary",
   "type": "project",
   "autoload": {
     "psr-4": {

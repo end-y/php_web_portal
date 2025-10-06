@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use PHPWebPortal\User;
+use PHPWebPortal\Utils;
 
 $error = null;
 
@@ -36,7 +37,7 @@ ob_start();
 
         <?php if($error): ?>
             <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                <?php echo htmlspecialchars($error); ?>
+                <?php echo Utils::e($error); ?>
             </div>
         <?php endif; ?>
 

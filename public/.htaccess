@@ -7,3 +7,4 @@ RewriteCond %{REQUEST_FILENAME} !-d
 # .php uzantısını ekle
 RewriteRule ^([^\.]+)$ $1.php [NC,L]
 
+

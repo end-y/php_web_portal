@@ -1,88 +1,65 @@
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../src/components/TaskColorList.php';
+require_once __DIR__ . '/../src/components/TaskOrderList.php';
+require_once __DIR__ . '/../src/components/TaskModal.php';
 
-use PHPWebPortal\User;
-use PHPWebPortal\Task;
+use PHPWebPortal\Controllers\TaskController;
+use PHPWebPortal\Utils;
 
-$user = new User();
-$isTokenValid = $user->isTokenValid();
-if(!$isTokenValid) {
-    header("Location: /login");
+$controller = new TaskController();
+$data = $controller->index();
+extract($data);
+
+// Filtreleri uygula
+$tasks = Utils::applyFiltersAndSort($controller, $tasks);
+
+// Eğer AJAX partial isteği geliyorsa sadece JSON döndür
+if (isset($_GET['partial']) && $_GET['partial'] === '1') {
+    header('Content-Type: application/json');
+    echo json_encode(['tasks' => $tasks]);
     exit;
 }
-
-$task = new Task($user);
-$tasks = $task->getTasks();
-$colorTasks = $task->getColorTasks();
-// Layout değişkenleri
-$title = 'Görev Listesi';
-$showNav = true;
-$isLoggedIn = true;
-function getColor(string $colorCode): string {
-    $text = $colorCode ? "#ffffff" : "#000000";
-    return "text-[$text] bg-[$colorCode]";
-}
-// İçerik buffer'ını başlat
 ob_start();
 
 ?>
 
 <div class="bg-white rounded-lg shadow-md p-6">
 
+    <!-- Modal butonu (tablonun dışında) -->
+    <?php echo renderTaskModal(); ?>
+
+
     <!-- Arama Kutusu -->
-    <div class="mb-4">
+    <form class="mb-4 flex items-center gap-2">
         <input
+            name="search"
+            value="<?php echo Utils::e($_GET['search'] ?? ''); ?>"
             type="text"
             id="searchInput"
             placeholder="Görevlerde ara..."
             class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
-    </div>
+        <input type="button" class="bg-red-500 cursor-pointer text-white px-4 py-2 rounded-md" value="Clear filters" onclick="window.location.href = '/';">
+    </form>
 
     <!-- Görev Tablosu -->
     <div class="overflow-x-auto">
         <table class="w-full table-auto border-collapse">
             <thead>
                 <tr class="bg-gray-100">
-                    <th class="px-4 py-3 text-left font-semibold text-gray-700 border-b">
-                        <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown" class="text-gray-700 bg-gray-200 hover:bg-gray-300 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-4 py-2 text-center inline-flex items-center border border-gray-300" type="button">
-                            Tasks <svg class="w-2.5 h-2.5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
-                            </svg>
-                        </button>
-                        <div id="dropdown" class="absolute z-10 mt-2 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-lg w-32 border border-gray-200">
-                            <ul class="py-2 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
-                                <?php if(empty($colorTasks)): ?>
-                                    <li>
-                                        <span class="block px-4 py-2 text-gray-500">Henüz renk verisi yok</span>
-                                    </li>
-                                <?php else: ?>
-                                    <?php foreach($colorTasks as $colorTask): ?>
-                                        <?php if(!empty($colorTask["colorCode"])): ?>
-                                            <li>
-                                                <a href="#" class="block px-4 py-2 hover:bg-gray-100 flex items-center gap-2">
-                                                    <div class="w-4 h-4 rounded-md border border-gray-300" style="background-color: <?php echo htmlspecialchars($colorTask["colorCode"]); ?>;"></div>
-                                                    <span class="font-medium">Tasks</span>
-                                                    <span class="ml-auto text-xs bg-gray-100 px-2 py-1 rounded-full"><?php echo (int)$colorTask["amount"]; ?></span>
-                                                </a>
-                                            </li>
-                                        <?php endif; ?>
-                                    <?php endforeach; ?>
-                                <?php endif; ?>
-                            </ul>
-                        </div>
-                    </th>
-                    <th class="px-4 py-3 text-left font-semibold text-gray-700 border-b">Görev</th>
-                    <th class="px-4 py-3 text-left font-semibold text-gray-700 border-b">Başlık</th>
+                    <?php echo renderTaskColorList($colorTasks); ?>
+                    <?php echo renderTaskOrderList("title", "Görev"); ?>
+                    <?php echo renderTaskOrderList("description", "Başlık"); ?>
                 </tr>
             </thead>
             <tbody id="taskTable">
                 <?php foreach($tasks as $task): ?>
-                    <?php $colorClass = getColor(htmlspecialchars($task["colorCode"])); ?>
+                    <?php $colorClass = TaskController::getColorClass(Utils::e($task["colorCode"])); ?>
                     <tr class="border-b hover:bg-gray-50 transition">
-                        <td class="px-4 <?php echo $colorClass; ?> py-3"><?php echo htmlspecialchars($task["task"]); ?></td>
-                        <td class="px-4 <?php echo $colorClass; ?> py-3"><?php echo htmlspecialchars($task["title"]); ?></td>
-                        <td class="px-4 <?php echo $colorClass; ?> py-3"><?php echo htmlspecialchars($task["description"]); ?></td>
+                        <td class="px-4 <?php echo $colorClass; ?> py-3"><?php echo Utils::e($task["task"]); ?></td>
+                        <td class="px-4 <?php echo $colorClass; ?> py-3"><?php echo Utils::e($task["title"]); ?></td>
+                        <td class="px-4 <?php echo $colorClass; ?> py-3"><?php echo Utils::e($task["description"]); ?></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
@@ -119,16 +96,79 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-// Arama fonksiyonu
-document.getElementById('searchInput').addEventListener('keyup', function() {
-    const searchTerm = this.value.toLowerCase();
-    const rows = document.querySelectorAll('#taskTable tr');
+// Arama fonksiyonu - güvenli: debounce, history.replaceState, fetch ile JSON al
+(function() {
+    const input = document.getElementById('searchInput');
+    const tableBody = document.getElementById('taskTable');
+    let timer = null;
+    const DEBOUNCE_MS = 300;
 
-    rows.forEach(row => {
-        const text = row.textContent.toLowerCase();
-        row.style.display = text.includes(searchTerm) ? '' : 'none';
+    function buildUrl(search) {
+        const url = new URL(window.location.href);
+        if (search && search.length) url.searchParams.set('search', search);
+        else url.searchParams.delete('search');
+        return url;
+    }
+
+    function renderTasks(tasks) {
+        while (tableBody.firstChild) tableBody.removeChild(tableBody.firstChild);
+        tasks.forEach(task => {
+            const tr = document.createElement('tr');
+            tr.className = 'border-b hover:bg-gray-50 transition';
+
+            const td1 = document.createElement('td');
+            td1.className = 'px-4 ' + "text-[" + (task.colorCode ? "white" : "black") + "] " + (task.colorCode ? 'bg-[' + task.colorCode + ']' : '') + ' py-3';
+            td1.textContent = task.task || '';
+
+            const td2 = document.createElement('td');
+            td2.className = 'px-4 ' + "text-[" + (task.colorCode ? "white" : "black") + "] " + (task.colorCode ? 'bg-[' + task.colorCode + ']' : '') + ' py-3';
+            td2.textContent = task.title || '';
+
+            const td3 = document.createElement('td');
+            td3.className = 'px-4 ' + "text-[" + (task.colorCode ? "white" : "black") + "] " + (task.colorCode ? 'bg-[' + task.colorCode + ']' : '') + ' py-3';
+            td3.textContent = task.description || '';
+
+            tr.appendChild(td1);
+            tr.appendChild(td2);
+            tr.appendChild(td3);
+            tableBody.appendChild(tr);
+        });
+    }
+
+    async function fetchAndUpdate(search) {
+        const url = new URL(window.location.origin + window.location.pathname);
+        if (search && search.length) url.searchParams.set('search', search);
+        url.searchParams.set('partial', '1');
+        const res = await fetch(url.toString(), { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+        if (!res.ok) return;
+        const data = await res.json();
+        renderTasks(Object.values(data.tasks) || []);
+    }
+    function updateUrl(search) {
+        const urls = document.querySelectorAll("#urls");
+        
+        urls.forEach(url => {
+            const urlObject = new URL(url.href);
+            if(search.length === 0) {
+                urlObject.searchParams.delete("search");
+                url.href = urlObject.href;
+                return;
+            }
+            urlObject.searchParams.set("search", search);
+            url.href = urlObject.href;
+        });
+    }
+    input.addEventListener('input', function(e) {
+        const q = e.target.value;
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            const newUrl = buildUrl(q);
+            history.replaceState(null, '', newUrl.toString());
+            updateUrl(q);
+            fetchAndUpdate(q).catch(console.error);
+        }, DEBOUNCE_MS);
     });
-});
+})();
 </script>
 
 <?php

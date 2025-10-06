@@ -9,3 +9,4 @@ $user->logout();
 header("Location: /login");
 exit;
 
+

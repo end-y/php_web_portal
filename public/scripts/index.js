@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", function () {
 // Arama fonksiyonu - güvenli: debounce, history.replaceState, fetch ile JSON al
 (function () {
   const input = document.getElementById("searchInput");
-  const tableBody = document.getElementById("taskTable");
+  const taskTableBody = document.getElementById("taskTable"); // ID'yi taskTable olarak değiştirdim
   let timer = null;
   const DEBOUNCE_MS = 300;
 
@@ -44,49 +44,54 @@ document.addEventListener("DOMContentLoaded", function () {
     return url;
   }
 
-  function renderTasks(tasks) {
-    while (tableBody.firstChild) tableBody.removeChild(tableBody.firstChild);
+  function renderAndUpdateTasks(tasks) {
+    if (!taskTableBody) {
+      console.error("taskTableBody elementi bulunamadı.");
+      return;
+    }
+
+    // Mevcut tablo içeriğini temizle
+    taskTableBody.innerHTML = "";
+
+    // Görevleri tabloya ekle
     tasks.forEach((task) => {
-      const tr = document.createElement("tr");
-      tr.className = "border-b hover:bg-gray-50 transition";
-
-      const td1 = document.createElement("td");
-      td1.className =
-        "px-4 " +
-        "text-[" +
-        (task.colorCode ? "white" : "black") +
-        "] " +
-        (task.colorCode ? "bg-[" + task.colorCode + "]" : "") +
-        " py-3";
-      td1.textContent = task.task || "";
-
-      const td2 = document.createElement("td");
-      td2.className =
-        "px-4 " +
-        "text-[" +
-        (task.colorCode ? "white" : "black") +
-        "] " +
-        (task.colorCode ? "bg-[" + task.colorCode + "]" : "") +
-        " py-3";
-      td2.textContent = task.title || "";
-
-      const td3 = document.createElement("td");
-      td3.className =
-        "px-4 " +
-        "text-[" +
-        (task.colorCode ? "white" : "black") +
-        "] " +
-        (task.colorCode ? "bg-[" + task.colorCode + "]" : "") +
-        " py-3";
-      td3.textContent = task.description || "";
-
-      tr.appendChild(td1);
-      tr.appendChild(td2);
-      tr.appendChild(td3);
-      tableBody.appendChild(tr);
+      const row = document.createElement("tr");
+      row.className = "border-b hover:bg-gray-50 transition"; // Mevcut arama fonksiyonundan alındı
+      row.innerHTML = `
+        <td>${task.task || ""}</td>
+        <td>${task.title || ""}</td>
+        <td>${task.description || ""}</td>
+        <td>${task.task_date || ""}</td>
+        <td><span class="px-2 py-1 rounded-full text-white" style="background-color: ${
+          task.color_code || "#CCCCCC"
+        };">${task.color_name || "N/A"}</span></td>
+        <td>
+          <button class="edit-task" data-id="${task.id}" data-title="${
+        task.title
+      }" data-description="${task.description}" data-color="${
+        task.color_code
+      }">Düzenle</button>
+          <button class="delete-task" data-id="${task.id}">Sil</button>
+        </td>
+      `;
+      taskTableBody.appendChild(row);
     });
   }
 
+  async function fetchTasksAndRender() {
+    try {
+      const response = await fetch("/api/tasks");
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      renderAndUpdateTasks(data.tasks);
+    } catch (error) {
+      console.error("Görevler getirilirken bir hata oluştu:", error);
+    }
+  }
+
+  // Mevcut arama fonksiyonundaki fetchAndUpdate çağrısını güncelledim
   async function fetchAndUpdate(search) {
     const url = new URL(window.location.origin + window.location.pathname);
     if (search && search.length) url.searchParams.set("search", search);
@@ -96,7 +101,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
     if (!res.ok) return;
     const data = await res.json();
-    renderTasks(Object.values(data.tasks) || []);
+    renderAndUpdateTasks(Object.values(data.tasks) || []); // renderTasks yerine renderAndUpdateTasks kullandım
   }
   function updateUrl(search) {
     const urls = document.querySelectorAll("#urls");
@@ -122,4 +127,10 @@ document.addEventListener("DOMContentLoaded", function () {
       fetchAndUpdate(q).catch(console.error);
     }, DEBOUNCE_MS);
   });
+
+  // İlk yüklemede görevleri getir
+  fetchTasksAndRender();
+
+  // Her 60 dakikada bir görevleri otomatik yenile (3600000 milisaniye = 60 dakika)
+  setInterval(fetchTasksAndRender, 3600000);
 })();

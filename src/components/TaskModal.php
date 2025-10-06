@@ -12,7 +12,7 @@ function renderTaskModal(): void {
     ?>
     <div class="mb-4">
         <!-- Açma butonu -->
-        <button id="openTaskModal" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Resim Seç ve Önizle</button>
+        <button id="openTaskModal" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Image Select and Preview</button>
 
         <!-- Modal -->
         <div id="taskModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-50">

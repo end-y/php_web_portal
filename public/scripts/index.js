@@ -123,3 +123,77 @@ document.addEventListener("DOMContentLoaded", function () {
     }, DEBOUNCE_MS);
   });
 })();
+
+(function () {
+  const AUTO_REFRESH_INTERVAL = 60 * 60 * 1000;
+
+  async function autoRefreshTable() {
+    try {
+      // Mevcut URL parametrelerini al
+      const currentUrl = new URL(window.location.href);
+      const searchParam = currentUrl.searchParams.get("search") || "";
+      const colorParam = currentUrl.searchParams.get("color") || "";
+      const sortParam = currentUrl.searchParams.get("sort") || "";
+      const sortypeParam = currentUrl.searchParams.get("sortype") || "";
+
+      // API URL'ini oluştur
+      const apiUrl = new URL(window.location.origin + window.location.pathname);
+      if (searchParam) apiUrl.searchParams.set("search", searchParam);
+      if (colorParam) apiUrl.searchParams.set("color", colorParam);
+      if (sortParam) apiUrl.searchParams.set("sort", sortParam);
+      if (sortypeParam) apiUrl.searchParams.set("sortype", sortypeParam);
+      apiUrl.searchParams.set("partial", "1");
+
+      // Veriyi fetch et
+      const response = await fetch(apiUrl.toString(), {
+        headers: { "X-Requested-With": "XMLHttpRequest" },
+      });
+
+      if (!response.ok) {
+        console.error("Auto-refresh failed:", response.status);
+        return;
+      }
+
+      const data = await response.json();
+      const tableBody = document.getElementById("taskTable");
+
+      // Tabloyu güncelle
+      if (tableBody && data.tasks) {
+        while (tableBody.firstChild)
+          tableBody.removeChild(tableBody.firstChild);
+
+        const tasks = Object.values(data.tasks);
+        tasks.forEach((task) => {
+          const tr = document.createElement("tr");
+          tr.className = "border-b hover:bg-gray-50 transition";
+
+          const colorClass = task.colorCode
+            ? "text-[white] bg-[" + task.colorCode + "]"
+            : "text-[black]";
+
+          const td1 = document.createElement("td");
+          td1.className = "px-4 " + colorClass + " py-3";
+          td1.textContent = task.task || "";
+
+          const td2 = document.createElement("td");
+          td2.className = "px-4 " + colorClass + " py-3";
+          td2.textContent = task.title || "";
+
+          const td3 = document.createElement("td");
+          td3.className = "px-4 " + colorClass + " py-3";
+          td3.textContent = task.description || "";
+
+          tr.appendChild(td1);
+          tr.appendChild(td2);
+          tr.appendChild(td3);
+          tableBody.appendChild(tr);
+        });
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+
+  // İlk yükleme sonrası 60 dakikada bir çalıştır
+  setInterval(autoRefreshTable, AUTO_REFRESH_INTERVAL);
+})();

@@ -21,9 +21,10 @@ $routes = [
 
 if (array_key_exists($uri, $routes)) {
     require __DIR__ . '/public' . $routes[$uri];
+    echo "hello world3";
     return true;
 }
-echo "hello world3";
+
 // Dosya varsa direk çalıştır
 if (file_exists(__DIR__ . '/public' . $uri)) {
     return false;

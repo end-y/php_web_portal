@@ -84,7 +84,9 @@ jobs:
             if [ -f composer.json ]; then
               echo "📦 Composer dependencies güncelleniyor..."
               if command -v composer &> /dev/null; then
+                cd ${{ secrets.DO_PROJECT_PATH }}
                 composer install --no-dev --optimize-autoloader --no-interaction
+                composer dump-autoload --optimize --no-interaction
               else
                 echo "⚠️ Composer bulunamadı, atlanıyor..."
               fi

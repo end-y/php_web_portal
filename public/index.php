@@ -1,8 +1,8 @@
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
-require_once __DIR__ . '/../src/components/TaskColorList.php';
-require_once __DIR__ . '/../src/components/TaskOrderList.php';
-require_once __DIR__ . '/../src/components/TaskModal.php';
+require_once __DIR__ . '/../src/Components/TaskColorList.php';
+require_once __DIR__ . '/../src/Components/TaskOrderList.php';
+require_once __DIR__ . '/../src/Components/TaskModal.php';
 
 use PHPWebPortal\Controllers\TaskController;
 use PHPWebPortal\Utils;

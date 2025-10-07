@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $title ?? 'PHP Web Portal'; ?></title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/output.css">
 </head>
 <body class="bg-gray-50">
     <?php if(isset($showNav) && $showNav): ?>
@@ -29,7 +29,10 @@
     <main class="container mx-auto px-4">
         <?php echo $content; ?>
     </main>
-    <script src="/scripts/index.js"></script>
-    <script src="/scripts/modal.js"></script>
+    <?php if(isset($includeScripts) && is_array($includeScripts)): ?>
+        <?php foreach($includeScripts as $script): ?>
+            <script src="<?php echo $script; ?>"></script>
+        <?php endforeach; ?>
+    <?php endif; ?>
 </body>
 </html>

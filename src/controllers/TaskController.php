@@ -61,10 +61,13 @@ class TaskController
         return $tasks;
     }
 
-    public static function getColorClass(string $colorCode): string
+    public static function getColorStyle(string $colorCode): string
     {
-        $text = $colorCode ? "#ffffff" : "#000000";
-        return "text-[$text] bg-[$colorCode]";
+        if (!$colorCode) {
+            return '';
+        }
+        $text = "#ffffff";
+        return "color: $text; background-color: $colorCode;";
     }
 }
 

@@ -3,5 +3,7 @@ vendor/
 storage/sessions/*
 !storage/sessions/.gitkeep
 
-
+node_modules
+package-lock.json
+package.json
 

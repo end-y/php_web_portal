@@ -8,7 +8,7 @@ function renderTaskOrderList($sortype, $title): void {
     $currentSortype = $_GET['sortype'] ?? '';
     $isActive = $currentSortype === $sortype;
     ?>
-    <th class="px-4 py-5 text-left font-semibold text-gray-700 border-b">
+    <th class="px-4 py-5 text-left font-semibold text-gray-700 border-b border-gray-200">
         <a class="float-left mr-[5px]" href="<?php echo Utils::updateQueryParams(["sort" => $nextSort,"sortype" => $sortype]); ?>"><?php echo Utils::e($title); ?></a>
         <?php if($isActive): ?>
             <?php if($currentSort === 'asc'): ?>

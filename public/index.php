@@ -55,11 +55,11 @@ ob_start();
             </thead>
             <tbody id="taskTable">
                 <?php foreach($tasks as $task): ?>
-                    <?php $colorClass = TaskController::getColorClass(Utils::e($task["colorCode"])); ?>
-                    <tr class="border-b hover:bg-gray-50 transition">
-                        <td class="px-4 <?php echo $colorClass; ?> py-3"><?php echo Utils::e($task["task"]); ?></td>
-                        <td class="px-4 <?php echo $colorClass; ?> py-3"><?php echo Utils::e($task["title"]); ?></td>
-                        <td class="px-4 <?php echo $colorClass; ?> py-3"><?php echo Utils::e($task["description"]); ?></td>
+                    <?php $colorStyle = TaskController::getColorStyle(Utils::e($task["colorCode"])); ?>
+                    <tr class="border-b border-gray-200 hover:bg-gray-100 transition">
+                        <td class="px-4 py-3" style="<?php echo $colorStyle; ?>"><?php echo Utils::e($task["task"]); ?></td>
+                        <td class="px-4 py-3" style="<?php echo $colorStyle; ?>"><?php echo Utils::e($task["title"]); ?></td>
+                        <td class="px-4 py-3" style="<?php echo $colorStyle; ?>"><?php echo Utils::e($task["description"]); ?></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
@@ -69,5 +69,6 @@ ob_start();
 
 <?php
 $content = ob_get_clean();
+$includeScripts = ['/scripts/index.js', '/scripts/modal.js'];
 require_once __DIR__ . '/_layout.php';
 ?>

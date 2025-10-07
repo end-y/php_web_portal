@@ -51,33 +51,27 @@ document.addEventListener("DOMContentLoaded", function () {
       tr.className = "border-b hover:bg-gray-50 transition";
 
       const td1 = document.createElement("td");
-      td1.className =
-        "px-4 " +
-        "text-[" +
-        (task.colorCode ? "white" : "black") +
-        "] " +
-        (task.colorCode ? "bg-[" + task.colorCode + "]" : "") +
-        " py-3";
+      td1.className = "px-4 py-3";
+      if (task.colorCode) {
+        td1.style.color = "#ffffff";
+        td1.style.backgroundColor = task.colorCode;
+      }
       td1.textContent = task.task || "";
 
       const td2 = document.createElement("td");
-      td2.className =
-        "px-4 " +
-        "text-[" +
-        (task.colorCode ? "white" : "black") +
-        "] " +
-        (task.colorCode ? "bg-[" + task.colorCode + "]" : "") +
-        " py-3";
+      td2.className = "px-4 py-3";
+      if (task.colorCode) {
+        td2.style.color = "#ffffff";
+        td2.style.backgroundColor = task.colorCode;
+      }
       td2.textContent = task.title || "";
 
       const td3 = document.createElement("td");
-      td3.className =
-        "px-4 " +
-        "text-[" +
-        (task.colorCode ? "white" : "black") +
-        "] " +
-        (task.colorCode ? "bg-[" + task.colorCode + "]" : "") +
-        " py-3";
+      td3.className = "px-4 py-3";
+      if (task.colorCode) {
+        td3.style.color = "#ffffff";
+        td3.style.backgroundColor = task.colorCode;
+      }
       td3.textContent = task.description || "";
 
       tr.appendChild(td1);
@@ -167,20 +161,28 @@ document.addEventListener("DOMContentLoaded", function () {
           const tr = document.createElement("tr");
           tr.className = "border-b hover:bg-gray-50 transition";
 
-          const colorClass = task.colorCode
-            ? "text-[white] bg-[" + task.colorCode + "]"
-            : "text-[black]";
-
           const td1 = document.createElement("td");
-          td1.className = "px-4 " + colorClass + " py-3";
+          td1.className = "px-4 py-3";
+          if (task.colorCode) {
+            td1.style.color = "#ffffff";
+            td1.style.backgroundColor = task.colorCode;
+          }
           td1.textContent = task.task || "";
 
           const td2 = document.createElement("td");
-          td2.className = "px-4 " + colorClass + " py-3";
+          td2.className = "px-4 py-3";
+          if (task.colorCode) {
+            td2.style.color = "#ffffff";
+            td2.style.backgroundColor = task.colorCode;
+          }
           td2.textContent = task.title || "";
 
           const td3 = document.createElement("td");
-          td3.className = "px-4 " + colorClass + " py-3";
+          td3.className = "px-4 py-3";
+          if (task.colorCode) {
+            td3.style.color = "#ffffff";
+            td3.style.backgroundColor = task.colorCode;
+          }
           td3.textContent = task.description || "";
 
           tr.appendChild(td1);

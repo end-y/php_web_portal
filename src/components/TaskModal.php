@@ -15,7 +15,7 @@ function renderTaskModal(): void {
         <button id="openTaskModal" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Image Select and Preview</button>
 
         <!-- Modal -->
-        <div id="taskModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-50">
+        <div id="taskModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50">
             <div class="bg-white rounded-lg shadow-lg w-11/12 max-w-xl p-6">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-lg font-semibold">Choose Image and Preview</h3>

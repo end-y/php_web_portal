@@ -18,8 +18,8 @@ $routes = [
     '/logout' => '/logout.php',
     '/index' => '/index.php',
 ];
-echo array_key_exists($uri, $routes) ? "true" : "false";
 if (array_key_exists($uri, $routes)) {
+    echo "hello world3";
     require __DIR__ . '/public' . $routes[$uri];
     return true;
 }

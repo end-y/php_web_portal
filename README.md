@@ -31,17 +31,10 @@ cd php_web_portal
 composer install
 ```
 
-3. For Tailwind development (optional):
+3. For local development you can use the built-in PHP server:
 
 ```bash
-npm install
-npm run build-css
-```
-
-4. For local development you can use the built-in PHP server:
-
-```bash
-php -S localhost:8000 -t public
+php -S localhost:8000 -t public router.php
 ```
 
 Main features:

@@ -40,8 +40,14 @@ jobs:
           cd deploy
           tar -czf ../deploy.tar.gz .
 
+      - name: Add DigitalOcean host to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.DO_HOST }} >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
       - name: Deploy to Digital Ocean
-        uses: appleboy/scp-action@master
+        uses: appleboy/scp-action@v0.1.5
         with:
           host: ${{ secrets.DO_HOST }}
           username: ${{ secrets.DO_USERNAME }}
@@ -51,7 +57,7 @@ jobs:
           target: "/tmp/"
 
       - name: Execute deployment commands
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v0.1.5
         with:
           host: ${{ secrets.DO_HOST }}
           username: ${{ secrets.DO_USERNAME }}
@@ -60,41 +66,41 @@ jobs:
           script: |
             set -e
 
-            # Backup mevcut versiyon
+            # Backup current version
             if [ -d "${{ secrets.DO_PROJECT_PATH }}" ]; then
-              sudo cp -r ${{ secrets.DO_PROJECT_PATH }} ${{ secrets.DO_PROJECT_PATH }}_backup_$(date +%Y%m%d_%H%M%S)
+              sudo cp -r "${{ secrets.DO_PROJECT_PATH }}" "${{ secrets.DO_PROJECT_PATH }}_backup_$(date +%Y%m%d_%H%M%S)"
             fi
 
-            # Yeni versiyonu extract et
-            sudo mkdir -p ${{ secrets.DO_PROJECT_PATH }}
-            sudo tar -xzf /tmp/deploy.tar.gz -C ${{ secrets.DO_PROJECT_PATH }}
+            # Extract new version
+            sudo mkdir -p "${{ secrets.DO_PROJECT_PATH }}"
+            sudo tar -xzf /tmp/deploy.tar.gz -C "${{ secrets.DO_PROJECT_PATH }}"
             sudo rm /tmp/deploy.tar.gz
 
-            # Storage klasörünü oluştur
-            sudo mkdir -p ${{ secrets.DO_PROJECT_PATH }}/storage/sessions
-            sudo chmod -R 755 ${{ secrets.DO_PROJECT_PATH }}/storage
-            sudo chown -R www-data:www-data ${{ secrets.DO_PROJECT_PATH }}/storage
+            # Create storage folder
+            sudo mkdir -p "${{ secrets.DO_PROJECT_PATH }}/storage/sessions"
+            sudo chmod -R 755 "${{ secrets.DO_PROJECT_PATH }}/storage"
+            sudo chown -R www-data:www-data "${{ secrets.DO_PROJECT_PATH }}/storage"
 
-            # .env dosyasını kontrol et (elle oluşturulmuş olmalı)
+            # Check .env file (should be created manually)
             if [ ! -f "${{ secrets.DO_PROJECT_PATH }}/.env" ]; then
               echo "WARNING: .env file not found!"
             fi
 
-            # Composer dependencies (varsa)
-            if [ -f composer.json ]; then
-              echo "📦 Composer dependencies güncelleniyor..."
+            # Composer dependencies (if present in project path)
+            if [ -f "${{ secrets.DO_PROJECT_PATH }}/composer.json" ]; then
+              echo "📦 Composer dependencies updating..."
               if command -v composer &> /dev/null; then
-                cd ${{ secrets.DO_PROJECT_PATH }}
+                cd "${{ secrets.DO_PROJECT_PATH }}"
                 composer install --no-dev --optimize-autoloader --no-interaction
                 composer dump-autoload --optimize --no-interaction
               else
-                echo "⚠️ Composer bulunamadı, atlanıyor..."
+                echo "⚠️ Composer not found, skipping..."
               fi
             fi
 
             # Permissions
-            sudo chown -R www-data:www-data ${{ secrets.DO_PROJECT_PATH }}
-            sudo chmod -R 755 ${{ secrets.DO_PROJECT_PATH }}
+            sudo chown -R www-data:www-data "${{ secrets.DO_PROJECT_PATH }}"
+            sudo chmod -R 755 "${{ secrets.DO_PROJECT_PATH }}"
 
             # Restart services
             if command -v systemctl &> /dev/null; then
@@ -105,16 +111,16 @@ jobs:
             echo "✅ Deployment completed successfully!"
 
       - name: Verify deployment
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v0.1.5
         with:
           host: ${{ secrets.DO_HOST }}
           username: ${{ secrets.DO_USERNAME }}
           key: ${{ secrets.DO_SSH_KEY }}
           port: ${{ secrets.DO_PORT }}
           script: |
-            cd ${{ secrets.DO_PROJECT_PATH }}
+            cd "${{ secrets.DO_PROJECT_PATH }}"
             php --version
-            composer --version
+            composer --version || true
             ls -la
             echo "🚀 Deployment verification completed!"
 

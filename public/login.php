@@ -20,7 +20,7 @@ ob_start();
     <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
         <div class="text-center mb-6">
             <h1 class="text-3xl font-bold text-gray-800">PHP Web Portal</h1>
-            <p class="text-gray-600 mt-2">Devam etmek için giriş yapın</p>
+            <p class="text-gray-600 mt-2">For continue, please login</p>
         </div>
 
         <?php if(isset($error) && $error): ?>
@@ -38,7 +38,7 @@ ob_start();
                     type="text" 
                     name="username" 
                     id="username"
-                    placeholder="Kullanıcı adınızı girin" 
+                    placeholder="Enter your username" 
                     required
                     class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
@@ -52,7 +52,7 @@ ob_start();
                     type="password" 
                     name="password" 
                     id="password"
-                    placeholder="Şifrenizi girin" 
+                    placeholder="Enter your password" 
                     required
                     class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >

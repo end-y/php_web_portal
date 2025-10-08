@@ -2,7 +2,7 @@ PHP Web Portal
 
 This repository contains a small PHP-based web portal application. The main technologies used in the project are:
 
-- **Backend**: PHP
+- **Backend**: PHP (Composer)
 - **Frontend**: HTML, JavaScript, CSS (Tailwind)
 - **Web server**: nginx
 - **CI/CD**: GitHub Actions

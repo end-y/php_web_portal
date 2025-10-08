@@ -82,7 +82,9 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   async function fetchAndUpdate(search) {
-    const url = new URL(window.location.origin + window.location.pathname);
+    const url = new URL(
+      window.location.origin + window.location.pathname + window.location.search
+    );
     if (search && search.length) url.searchParams.set("search", search);
     url.searchParams.set("partial", "1");
     const res = await fetch(url.toString(), {
@@ -91,6 +93,19 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!res.ok) return;
     const data = await res.json();
     renderTasks(Object.values(data.tasks) || []);
+  }
+  function updateSortButton(search) {
+    const sortButton = document.querySelectorAll("#urls-sort a");
+    sortButton.forEach((button) => {
+      const urlObject = new URL(button.href);
+      if (search.length === 0) {
+        urlObject.searchParams.delete("search");
+        button.href = urlObject.href;
+        return;
+      }
+      urlObject.searchParams.set("search", search);
+      button.href = urlObject.href;
+    });
   }
   function updateUrl(search) {
     const urls = document.querySelectorAll("#urls");
@@ -113,6 +128,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const newUrl = buildUrl(q);
       history.replaceState(null, "", newUrl.toString());
       updateUrl(q);
+      updateSortButton(q);
       fetchAndUpdate(q).catch(console.error);
     }, DEBOUNCE_MS);
   });

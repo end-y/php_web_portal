@@ -12,7 +12,7 @@ use PHPWebPortal\Utils;
 function renderTaskColorList(array $colorTasks): void {
     ?>
     <th class="px-4 py-3 text-left font-semibold text-gray-700 border-b border-gray-200">
-        <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown" class="text-gray-700 bg-gray-200 hover:bg-gray-300 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-4 py-2 text-center inline-flex items-center border border-gray-300" type="button">
+        <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown" class="text-gray-700 bg-gray-200 cursor-pointer hover:bg-gray-300 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-4 py-2 text-center inline-flex items-center border border-gray-300" type="button">
             Tasks <svg class="w-2.5 h-2.5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
             </svg>

@@ -17,10 +17,10 @@
                 <a href="/" class="text-gray-600 hover:text-blue-600">Görevler</a>
                 <?php if(isset($isLoggedIn) && $isLoggedIn): ?>
                     <form action="/logout" method="post" class="inline">
-                        <button type="submit" class="text-gray-600 hover:text-red-600">Çıkış Yap</button>
+                        <button type="submit" class="text-gray-600 cursor-pointer hover:text-red-600">Çıkış Yap</button>
                     </form>
                 <?php else: ?>
-                    <a href="/login" class="text-gray-600 hover:text-blue-600">Giriş Yap</a>
+                    <a href="/login" class="text-gray-600 cursor-pointer hover:text-blue-600">Giriş Yap</a>
                 <?php endif; ?>
             </div>
         </div>

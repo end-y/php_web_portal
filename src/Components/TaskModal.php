@@ -12,7 +12,7 @@ function renderTaskModal(): void {
     ?>
     <div class="mb-4">
         <!-- Açma butonu -->
-        <button id="openTaskModal" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Image Select and Preview</button>
+        <button id="openTaskModal" class="bg-blue-600 cursor-pointer text-white px-4 py-2 rounded-md hover:bg-blue-700">Image Select and Preview</button>
 
         <!-- Modal -->
         <div id="taskModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50">
@@ -23,7 +23,7 @@ function renderTaskModal(): void {
 
                 <div class="space-y-4">
                     <div>
-                        <button id="chooseImageButton" class="bg-gray-100 border border-gray-300 px-3 py-2 rounded-md">Dosya Seç</button>
+                        <button id="chooseImageButton" class="bg-gray-100 cursor-pointer border border-gray-300 px-3 py-2 rounded-md">Dosya Seç</button>
                         <input id="imageInput" type="file" accept="image/*" class="hidden">
                     </div>
 
@@ -35,7 +35,7 @@ function renderTaskModal(): void {
                     </div>
 
                     <div class="text-right">
-                        <button id="closeTaskModalFooter" class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">Kapat</button>
+                        <button id="closeTaskModalFooter" class="bg-red-500 cursor-pointer text-white px-4 py-2 rounded-md hover:bg-red-600">Kapat</button>
                     </div>
                 </div>
             </div>

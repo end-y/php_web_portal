@@ -60,7 +60,7 @@ ob_start();
 
             <button 
                 type="submit" 
-                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition duration-200"
+                class="w-full cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition duration-200"
             >
                 Login
             </button>

@@ -4,7 +4,7 @@ This repository contains a small PHP-based web portal application. The main tech
 
 - **Backend**: PHP
 - **Frontend**: HTML, JavaScript, CSS (Tailwind)
-- **Web server**: nginx (recommended production configuration)
+- **Web server**: nginx
 - **CI/CD**: GitHub Actions
 
 The application fetches data from a remote API and displays it in a table, with basic search/filter functionality and a modal for selecting and previewing an image.
@@ -21,7 +21,7 @@ Getting started (local):
 1. Clone the repository:
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/end-y/php_web_portal.git
 cd php_web_portal
 ```
 

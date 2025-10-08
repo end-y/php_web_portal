@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", function () {
     while (tableBody.firstChild) tableBody.removeChild(tableBody.firstChild);
     tasks.forEach((task) => {
       const tr = document.createElement("tr");
-      tr.className = "border-b hover:bg-gray-50 transition";
+      tr.className = "border-b border-gray-200 hover:bg-gray-50 transition";
 
       const td1 = document.createElement("td");
       td1.className = "px-4 py-3";
@@ -159,7 +159,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const tasks = Object.values(data.tasks);
         tasks.forEach((task) => {
           const tr = document.createElement("tr");
-          tr.className = "border-b hover:bg-gray-50 transition";
+          tr.className = "border-b border-gray-200 hover:bg-gray-50 transition";
 
           const td1 = document.createElement("td");
           td1.className = "px-4 py-3";
